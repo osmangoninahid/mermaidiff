@@ -1,86 +1,99 @@
-# mermaidiff
+<p align="center"><img src="docs/logo.png" width="96" alt="mermaidiff logo"></p>
 
-**`git diff` for behavior.** Turn any commit, staged change or merge request into a short brief your team can read in 30 seconds: a sequence diagram that shows what is ➕ new, ✏️ changed and ➖ removed, plus the payload diff, proven breaks and open questions.
+<h1 align="center">mermaidiff</h1>
 
-It runs inside your coding agent (Claude Code, Codex, Cursor) as a skill. No server, no account, nothing leaves your machine except what your agent already sends to its model.
+<p align="center"><b>git diff for behavior.</b> Type <code>/mermaidiff</code> on a PR or commit and get a sequence diagram of what it changes: ➕ new, ✏️ changed, ➖ removed. Read it in 30 seconds instead of the whole diff.</p>
+
+<p align="center">Works inside Claude Code, Codex and other agents that load skills · GitHub PRs and GitLab MRs · no server, no account</p>
+
+<p align="center"><img src="docs/demo.gif" alt="mermaidiff demo: /mermaidiff on a gin pull request" width="900"></p>
+
+## Quick start
+
+```bash
+git clone https://github.com/OWNER/mermaidiff && cd mermaidiff && ./install.sh
+```
+
+Then, in any repo, inside your agent:
+
+```
+/mermaidiff                     # your staged or latest change
+/mermaidiff <PR or MR link>     # someone else's change
+```
+
+The brief opens in your browser. Ask for changes in plain words ("drop the RunTLS step") and the open tab updates. **Copy for MR** gives you markdown that GitHub and GitLab render as is.
+
+## What you get
 
 ![mermaidiff brief for a gin commit](docs/screenshot-gin.png)
 
-## Why
-
-AI agents write long plans nobody reads. Reviewers read code diffs but not the flow they change. mermaidiff gives one picture that people and agents can both read, adjust and approve.
+- **One line** saying what the code changes, taken from the diff, not the commit message
+- **A sequence diagram** of only the changed steps, colored like a diff
+- **Proof** for each step: `file:line` and an evidence tier, 🔵 seen in the code · 🟡 inferred · 🟢 seen running
+- **The payload diff** when a request, response, model or config changes
+- **Breaks**, only when the code proves them, and up to 2 open questions
+- **⚠️ when the commit message or PR text claims something the diff doesn't do**
 
 ## The one rule: no false positives
 
-A wrong warning is worse than a missing one. mermaidiff only states what the diff or the code proves:
+A wrong warning is worse than a missing one. mermaidiff only shows what the diff or the code proves. It never guesses about systems outside your repo, it just lists them as `Not checked`.
 
-- every changed step carries an evidence tier: 🟢 verified (seen running) · 🔵 code (in the diff or code) · 🟡 inferred (ticket, plan)
-- a break is shown only with the reader that breaks **and** proof the path is reachable
-- systems outside the repo are never guessed about, only listed as `Not checked`
-- the summary comes from the diff, not the commit message. If the message claims something the diff doesn't do, you get a `⚠️` line
+## Tested
 
-## Results
+10 real commits from FastAPI, gin and excalidraw, every claim checked against the code. Details in [eval/](eval/).
 
-Tested on 10 real commits from 3 public repos ([eval/](eval/)):
+![eval scorecard](docs/eval-scorecard.png)
 
-| | FastAPI (Python) | gin (Go) | excalidraw (TS) |
-|---|---|---|---|
-| changes found | 3/3 | 3/3 + lying commit | 3/3 |
-| false positives | 0 | 0 | 0 |
-
-Every non-trivial claim in the briefs was checked against the code. Full scores: [eval/SCORE-2026-10-04.md](eval/SCORE-2026-10-04.md).
-
-## Install
-
-Needs `git` and `python3`. Recommended: `rg`, and [CodeGraph](https://github.com/colbymchenry/codegraph) or [Graphify](https://github.com/Graphify-Labs/graphify) for faster, deeper caller lookups (falls back to grep).
-
-```bash
-git clone https://github.com/<you>/mermaidiff && cd mermaidiff
-./install.sh            # user-wide: ~/.claude/skills and ~/.agents/skills
-./install.sh --project  # inside a repo, shared with the team
-./install.sh --link     # symlink, for working on mermaidiff itself
-```
-
-The installer downloads Mermaid once for offline use and adds `.mermaidiff/` to your global git ignore.
-
-## Use
+## All commands
 
 ```
-/mermaidiff                  staged, else unstaged, else last commit
+/mermaidiff                     staged, else unstaged, else last commit
 /mermaidiff staged
-/mermaidiff wip              unstaged changes
-/mermaidiff a1b2c3d          one commit
-/mermaidiff main..feature    a range
-/mermaidiff <PR link> · #123  GitHub, needs gh
-/mermaidiff <MR link> · !123  GitLab, needs glab
-/mermaidiff ABC-123          a ticket (experimental, needs a Jira MCP)
+/mermaidiff wip                 unstaged changes
+/mermaidiff a1b2c3d             one commit
+/mermaidiff main..feature       a range
+/mermaidiff <PR link> · #123    GitHub, needs gh
+/mermaidiff <MR link> · !123    GitLab, needs glab
+/mermaidiff ABC-123             a ticket (experimental, needs a Jira MCP)
 /mermaidiff "move sync to a queue"   a plan, no code yet
 ```
 
-The terminal gets the summary, breaks and questions. The full brief opens in your browser as `.mermaidiff/<mode>.html` and reloads itself when you ask the agent to change it ("drop step 4"). **Copy for MR** puts the markdown on your clipboard: paste it into a GitHub PR or GitLab MR, both render the diagram as is.
+## Install options
 
-More examples: [examples/](examples/)
+Needs `git` and `python3`. Recommended: `rg`, and [CodeGraph](https://github.com/colbymchenry/codegraph) or [Graphify](https://github.com/Graphify-Labs/graphify) for faster caller lookups (falls back to grep).
+
+```bash
+./install.sh            # for you: ~/.claude/skills and ~/.agents/skills
+./install.sh --project  # for a repo, shared with your team
+./install.sh --link     # symlink, if you work on mermaidiff itself
+```
+
+The installer downloads Mermaid once for offline use and adds `.mermaidiff/` to your global git ignore.
 
 ## Status
 
 | | |
 |---|---|
-| commit, staged, wip, range, GitLab MR | tested |
-| GitHub PR | tested |
+| commit, staged, wip, range | tested |
+| GitHub PR, GitLab MR | tested |
 | browser viewer, live reload, copy for MR | tested |
 | ticket mode, Codex | experimental |
-| CI job that posts the brief on every MR | planned |
-| split view (before / after) | planned |
+| CI job that posts the brief on every PR | planned |
+| before / after split view | planned |
 
-## Layout
+## How it works
 
 ```
-skill/SKILL.md          how the agent gathers facts
-skill/format.md         the output format and rules
-skill/scripts/view.py   renders the brief to html, fixes the stat line, opens the browser
-eval/                   cases, expected answers, run prompt, scores
+skill/SKILL.md          tells the agent how to gather facts (git, gh, glab, grep or a code graph)
+skill/format.md         the output format and the rules, including "no false positives"
+skill/scripts/view.py   renders the brief to html, recounts the stat line, opens the browser
+eval/                   test cases, expected answers, run prompt, scores
 examples/               briefs from public repos
 ```
+
+## Contributing
+
+Found a wrong claim in a brief? That's the most useful bug report: open an issue with the brief and a link to the commit or PR. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
