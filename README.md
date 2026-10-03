@@ -11,7 +11,7 @@
 ## Quick start
 
 ```bash
-git clone https://github.com/OWNER/mermaidiff && cd mermaidiff && ./install.sh
+git clone https://github.com/osmangoninahid/mermaidiff && cd mermaidiff && ./install.sh
 ```
 
 Then, in any repo, inside your agent:
