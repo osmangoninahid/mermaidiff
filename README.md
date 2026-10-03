@@ -66,7 +66,7 @@ More examples: [examples/](examples/)
 | | |
 |---|---|
 | commit, staged, wip, range, GitLab MR | tested |
-| GitHub PR | new, not yet tested |
+| GitHub PR | tested |
 | browser viewer, live reload, copy for MR | tested |
 | ticket mode, Codex | experimental |
 | CI job that posts the brief on every MR | planned |
