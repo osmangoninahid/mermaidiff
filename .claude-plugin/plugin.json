@@ -2,10 +2,26 @@
   "name": "mermaidiff",
   "version": "0.1.1",
   "description": "Turn a commit, staged change, GitHub PR or GitLab MR into a short sequence diagram of only what changed, with file:line proof.",
-  "author": { "name": "Osman Goni Nahid", "url": "https://github.com/osmangoninahid" },
+  "author": {
+    "name": "Osman Goni Nahid",
+    "url": "https://github.com/osmangoninahid"
+  },
   "homepage": "https://github.com/osmangoninahid/mermaidiff",
   "repository": "https://github.com/osmangoninahid/mermaidiff",
   "license": "MIT",
-  "keywords": ["code-review", "mermaid", "pull-requests", "merge-requests", "diff", "sequence-diagram"],
-  "skills": ["./skill"]
+  "keywords": [
+    "code-review",
+    "mermaid",
+    "pull-requests",
+    "merge-requests",
+    "diff",
+    "sequence-diagram"
+  ],
+  "skills": [
+    "./skill"
+  ],
+  "displayName": "mermaidiff",
+  "icon": "./docs/logo.png",
+  "documentationUrl": "https://github.com/osmangoninahid/mermaidiff#readme",
+  "supportUrl": "https://github.com/osmangoninahid/mermaidiff/issues"
 }
