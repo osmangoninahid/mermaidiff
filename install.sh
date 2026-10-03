@@ -43,9 +43,9 @@ for t in "${TARGETS[@]}"; do
   echo "installed: $t ($MODE)"
 done
 echo
-for c in git rg python3 codegraph graphify glab; do
+for c in git rg python3 codegraph graphify gh glab; do
   if command -v "$c" >/dev/null; then echo "  ok      $c"; else echo "  missing $c"; fi
 done
 echo
-echo "Required: git, python3. Recommended: rg, codegraph or graphify. Optional: glab (MR links), Jira MCP (tickets)."
+echo "Required: git, python3. Recommended: rg, codegraph or graphify. Optional: gh (GitHub PR links), glab (GitLab MR links), Jira MCP (tickets)."
 echo "Try it:  /mermaidiff staged"

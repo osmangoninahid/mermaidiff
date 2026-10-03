@@ -1,6 +1,6 @@
 ---
 name: mermaidiff
-description: Brief any change as a git-style Mermaid flow diff (new / changed / removed) with payload diff, impact and open questions. Use for /mermaidiff, a Jira ticket, MR link, commit sha, staged or unstaged changes, branch range, plan, refactor idea, or bug walkthrough, or when the user says "brief me".
+description: Brief any change as a git-style Mermaid flow diff (new / changed / removed) with payload diff, impact and open questions. Use for /mermaidiff, a Jira ticket, GitLab MR or GitHub PR link, commit sha, staged or unstaged changes, branch range, plan, refactor idea, or bug walkthrough, or when the user says "brief me".
 ---
 
 # mermaidiff
@@ -16,13 +16,17 @@ Gather the facts, write the brief in the exact format in `format.md` (same folde
 | `wip` | unstaged | `git diff` |
 | 7–40 hex chars, or `commit <x>` | commit | `git show --stat <sha>` then `git diff <sha>^ <sha>` |
 | contains `..` | range | `git diff <base>...<head>` |
+| GitHub PR URL, `#123`, or `pr <x>` | pr | `gh pr view <n> --json title,body,baseRefName,headRefName,headRefOid` and `gh pr diff <n>` |
 | GitLab MR URL, `!123`, or `mr <x>` | mr | `glab mr view <iid>` and `glab mr diff <iid>` |
+| a bare number | pr or mr | pick by `git remote get-url origin`: github.com → `gh`, gitlab → `glab` |
 | Jira key (`ABC-123`) or Atlassian URL | ticket | Read issue + comments (Jira MCP), then find the current flow in code. "After" side is `(inferred)` |
 | anything else | plan | Current flow from code, "after" from the text. Mark it `(inferred)` |
 
 If the diff is empty (nothing staged, no changes), reply with one line only: `Nothing to brief: <why>. Try /mermaidiff <sha> or stage changes.` Don't write or overwrite a brief.
 
-If a login is missing (`glab`, Jira), say which one in one line and fall back to the local `git diff`.
+For a PR or MR, read code at the PR/MR head, not your local checkout: `git fetch origin <head-ref>` and read files with `git show FETCH_HEAD:<path>`. The PR/MR title and body are claims, like a commit message.
+
+If a login is missing (`gh`, `glab`, Jira), say which one in one line and fall back to the local `git diff`.
 
 If the change is only tests, docs, comments, logs or formatting: brief is `**No flow change.** <what changed>`. Skip step 2.
 
@@ -53,7 +57,7 @@ Keep 1–2 hops only. You need the path the change travels, not the whole system
 
 ## 4. Adjust and execute
 
-- If the change came from git (commit, staged, wip, range, MR), the diff is fact. The user may hide steps, but never rewrite facts to match: keep proof, payload and impact true, and add one line `Hidden by you: N steps · <what>` under the stat line. Only plan and ticket briefs can be changed freely.
+- If the change came from git (commit, staged, wip, range, PR, MR), the diff is fact. The user may hide steps, but never rewrite facts to match: keep proof, payload and impact true, and add one line `Hidden by you: N steps · <what>` under the stat line. Only plan and ticket briefs can be changed freely.
 - If the user edits lines ("drop step 4", "make it optional"), rewrite only those parts in the same file and run `view.py` again **without** `--open`. The open tab reloads itself.
 - When approved, the approved brief is the spec. Implement exactly that.
 - After implementing, run `git diff` and compare built vs approved: list ✅ matches and ⚠️ gaps (asked but not built, or built but not asked).

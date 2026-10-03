@@ -51,12 +51,13 @@ The installer downloads Mermaid once for offline use and adds `.mermaidiff/` to 
 /mermaidiff wip              unstaged changes
 /mermaidiff a1b2c3d          one commit
 /mermaidiff main..feature    a range
-/mermaidiff <MR or PR link>  needs glab (GitLab)
+/mermaidiff <PR link> · #123  GitHub, needs gh
+/mermaidiff <MR link> · !123  GitLab, needs glab
 /mermaidiff ABC-123          a ticket (experimental, needs a Jira MCP)
 /mermaidiff "move sync to a queue"   a plan, no code yet
 ```
 
-The terminal gets the summary, breaks and questions. The full brief opens in your browser as `.mermaidiff/<mode>.html` and reloads itself when you ask the agent to change it ("drop step 4"). **Copy for MR** puts the markdown on your clipboard: GitLab and GitHub render the diagram as is.
+The terminal gets the summary, breaks and questions. The full brief opens in your browser as `.mermaidiff/<mode>.html` and reloads itself when you ask the agent to change it ("drop step 4"). **Copy for MR** puts the markdown on your clipboard: paste it into a GitHub PR or GitLab MR, both render the diagram as is.
 
 More examples: [examples/](examples/)
 
@@ -64,7 +65,8 @@ More examples: [examples/](examples/)
 
 | | |
 |---|---|
-| commit, staged, wip, range, MR | tested |
+| commit, staged, wip, range, GitLab MR | tested |
+| GitHub PR | new, not yet tested |
 | browser viewer, live reload, copy for MR | tested |
 | ticket mode, Codex | experimental |
 | CI job that posts the brief on every MR | planned |
