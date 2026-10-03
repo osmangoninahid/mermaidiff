@@ -57,19 +57,23 @@ def compute_stat(text):
 
 
 def fix_stat_line(brief):
-    """Replace (or insert) the stat line in the brief with the computed one."""
+    """Replace the stat line with the computed one. Keeps exactly one, wherever it was."""
     text = brief.read_text()
     stat = compute_stat(text)
     if not stat:
         return text
+    pattern = re.compile(r"`[^`]*\b(new|changed|removed|break)\b[^`]*`")
     lines = text.split("\n")
-    for i, line in enumerate(lines[:6]):
-        if re.fullmatch(r"`[^`]*(new|changed|removed|break|❓)[^`]*`", line.strip()):
-            lines[i] = stat
-            break
+    hits = [i for i, l in enumerate(lines) if pattern.fullmatch(l.strip())]
+    if hits:
+        lines[hits[0]] = stat
+        for i in reversed(hits[1:]):        # drop extra stat lines
+            del lines[i]
+            if i < len(lines) and i > 0 and not lines[i].strip() and not lines[i - 1].strip():
+                del lines[i]
     else:
-        first_blank = next((i for i, l in enumerate(lines) if i > 0 and not l.strip()), 1)
-        lines[first_blank:first_blank] = ["", stat]
+        end = next((i for i, l in enumerate(lines) if i > 0 and not l.strip()), 1)
+        lines[end:end] = ["", stat]
     new = "\n".join(lines)
     if new != text:
         brief.write_text(new)
