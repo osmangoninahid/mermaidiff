@@ -1,0 +1,12 @@
+{
+  "name": "mermaidiff",
+  "description": "mermaidiff: see a change as a sequence diagram of only what changed",
+  "owner": { "name": "Osman Goni Nahid", "url": "https://github.com/osmangoninahid" },
+  "plugins": [
+    {
+      "name": "mermaidiff",
+      "source": "./",
+      "description": "Turn a commit, staged change, GitHub PR or GitLab MR into a short sequence diagram of only what changed, with file:line proof."
+    }
+  ]
+}

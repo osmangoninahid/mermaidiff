@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- install as a Claude Code plugin: `/plugin marketplace add osmangoninahid/mermaidiff`
+
 ## 0.1.0
 
 First public version.

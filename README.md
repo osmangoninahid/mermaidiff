@@ -10,11 +10,20 @@
 
 ## Quick start
 
+**Claude Code plugin** (no clone):
+
+```
+/plugin marketplace add osmangoninahid/mermaidiff
+/plugin install mermaidiff@mermaidiff
+```
+
+**Or with the installer** (Claude Code and Codex):
+
 ```bash
 git clone https://github.com/osmangoninahid/mermaidiff && cd mermaidiff && ./install.sh
 ```
 
-Then, in any repo, inside your agent:
+Then, in any repo, inside your agent (as a plugin the command is `/mermaidiff:mermaidiff`):
 
 ```
 /mermaidiff                     # your staged or latest change
@@ -68,7 +77,7 @@ Needs `git` and `python3`. Recommended: `rg`, and [CodeGraph](https://github.com
 ./install.sh --link     # symlink, if you work on mermaidiff itself
 ```
 
-The installer downloads Mermaid once for offline use and adds `.mermaidiff/` to your global git ignore.
+The installer downloads Mermaid once for offline use and adds `.mermaidiff/` to your global git ignore. The plugin skips both: the viewer loads Mermaid from a CDN, so add `.mermaidiff/` to your git ignore yourself.
 
 ## Status
 
