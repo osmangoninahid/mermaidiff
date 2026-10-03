@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mermaidiff</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1f1e1b;--muted:#6b6a64;--line:#e4e2da;--card:#ffffff;--add:#e6f4ea;--addfg:#1a7f37;--del:#fdecec;--delfg:#b42318;--code:#f3f2ee}
+@media (prefers-color-scheme:dark){:root{--bg:#161614;--fg:#e8e6df;--muted:#9c9a92;--line:#2c2b28;--card:#1d1c1a;--add:#0f2a17;--addfg:#6fdc8c;--del:#2e1212;--delfg:#ff8a80;--code:#232220}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
+header{position:sticky;top:0;z-index:2;display:flex;gap:12px;align-items:center;padding:10px 20px;background:var(--bg);border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+header b{color:var(--fg);font-weight:600}
+header .sp{flex:1}
+header button{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:4px 10px;cursor:pointer}
+#dot{width:8px;height:8px;border-radius:50%;background:#1a7f37}
+main{max-width:980px;margin:0 auto;padding:24px 20px 80px}
+main>p:first-child{font-size:20px;line-height:1.4}
+h1,h2,h3{font-weight:600;line-height:1.3}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--code);padding:1px 5px;border-radius:4px}
+pre{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 0;overflow:auto}
+pre code{background:none;padding:0;display:block}
+.dl{display:block;padding:0 16px;white-space:pre}
+.dl.add{background:var(--add);color:var(--addfg)}
+.dl.del{background:var(--del);color:var(--delfg)}
+.mmd{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:16px 0;overflow:auto;text-align:center}
+.stat{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px;font-size:13px}
+.stat span{padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.stat .warn{border-color:var(--delfg);color:var(--delfg)}
+.err{color:var(--delfg);white-space:pre-wrap;text-align:left;font-size:13px}
+ul{padding-left:22px}
+li{margin:4px 0}
+</style>
+</head>
+<body>
+<header><span id="dot"></span><b>mermaidiff</b><span id="file"></span><span class="sp"></span><span id="when"></span><button id="copy" title="Copy markdown, GitLab renders the Mermaid">Copy for MR</button></header>
+<main id="out">Loading…</main>
+<script>
+// Load a script from the local vendor folder first, then the CDN. Resolves null if both fail.
+function load(local, cdn) {
+  return new Promise(ok => {
+    const tag = src => { const s = document.createElement("script"); s.src = src; s.onload = () => ok(src); s.onerror = () => src === cdn ? ok(null) : tag(cdn); document.head.appendChild(s); };
+    tag(local);
+  });
+}
+</script>
+<script type="module">
+// Filled in by view.py when it writes the .html. No server: the page is a snapshot
+// that reloads itself when <name>.version.js reports a new version.
+const RAW = window.MERMAIDIFF_EMBED || "";
+const VERSION = window.MERMAIDIFF_VERSION || "";
+const VENDOR = window.MERMAIDIFF_VENDOR || "vendor/";
+const esc = s => s.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+document.getElementById("file").textContent = window.MERMAIDIFF_NAME || "";
+
+const markedSrc = await load(VENDOR + "marked.min.js", "https://cdn.jsdelivr.net/npm/marked@12/marked.min.js");
+const mermaidSrc = await load(VENDOR + "mermaid.min.js", "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js");
+const mermaid = window.mermaid;
+if (mermaid) {
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  // Notes are neutral grey so they never look like a ✏️ changed (yellow) block.
+  mermaid.initialize({startOnLoad:false, theme: dark ? "dark" : "default", securityLevel:"strict", sequence:{useMaxWidth:true},
+    themeVariables: dark ? {noteBkgColor:"#2c2c2a", noteBorderColor:"#5f5e5a", noteTextColor:"#d3d1c7"} : {noteBkgColor:"#f1efe8", noteBorderColor:"#d3d1c7", noteTextColor:"#444441"}});
+}
+
+async function render(){
+  const out = document.getElementById("out");
+  if (!markedSrc) { out.innerHTML = `<pre><code>${esc(RAW)}</code></pre>`; return; }
+  out.innerHTML = marked.parse(RAW);
+  for (const el of out.querySelectorAll("pre code.language-diff")) {
+    el.innerHTML = el.textContent.replace(/\n$/,"").split("\n").map(l =>
+      `<span class="dl ${l.startsWith("+") ? "add" : l.startsWith("-") ? "del" : ""}">${esc(l) || " "}</span>`).join("");
+  }
+  const src = [...out.querySelectorAll("pre code.language-mermaid")].map(e => e.textContent).join("\n");
+  const arrows = src.split("\n").filter(l => /(->>|-->>|->|-->|-x|--x)/.test(l) && l.includes(":")).map(l => l.split(":").slice(1).join(":"));
+  const c = k => arrows.filter(l => l.trim().startsWith(k)).length;
+  const qList = [...out.querySelectorAll("li")].filter(li => li.textContent.trim().startsWith("❓")).length;
+  const counts = {"+ new": c("➕"), "~ changed": c("✏️"), "− removed": c("➖"), "🔴 break": c("🔴"), "❓": Math.max(c("❓"), qList)};
+  const tiers = {"🟢": arrows.filter(l => l.includes("🟢")).length, "🔵": arrows.filter(l => l.includes("🔵")).length, "🟡": arrows.filter(l => l.includes("🟡")).length};
+  const changed = counts["+ new"] + counts["~ changed"] + counts["− removed"] + counts["🔴 break"];
+  if (src) {
+    const st = document.createElement("div"); st.className = "stat";
+    const pill = (t, w) => `<span class="${w ? "warn" : ""}">${t}</span>`;
+    let h = Object.entries(counts).filter(([, v]) => v).map(([k, v]) => pill(k.startsWith("❓") ? `❓ ${v}` : `${k.split(" ")[0]}${v} ${k.split(" ")[1]}`)).join("");
+    h += Object.entries(tiers).filter(([, v]) => v).map(([k, v]) => pill(`${k} ${v}/${changed} ${{"🟢":"verified","🔵":"code","🟡":"inferred"}[k]}`)).join("");
+    const untiered = arrows.filter(l => /^\s*(➕|✏️|➖|🔴)/.test(l) && !/[🟢🔵🟡]/u.test(l)).length;
+    if (untiered) h += pill(`${untiered} changed step(s) without a tier`, true);
+    // the stat line is a paragraph that holds only one inline code span
+    const statP = [...out.querySelectorAll("p")].find(p => p.children.length === 1 && p.firstElementChild.tagName === "CODE" && p.textContent.trim() === p.firstElementChild.textContent.trim() && /new|changed|removed|break|❓/.test(p.textContent));
+    const written = statP ? statP.firstElementChild : null;
+    if (written) {
+      const w = written.textContent.replace(/-(\d)/g, "−$1"), num = re => +((w.match(re) || [0, 0])[1]);
+      if (num(/\+(\d+)/) !== counts["+ new"] || num(/~(\d+)/) !== counts["~ changed"] || num(/−(\d+)/) !== counts["− removed"])
+        h += pill("stat line does not match diagram", true);
+    }
+    st.innerHTML = h;
+    out.querySelector("p").after(st);
+    if (written && written.parentElement.textContent.trim() === written.textContent.trim()) {
+      st.title = "LLM wrote: " + written.textContent;
+      written.parentElement.remove();
+    }
+  }
+  let n = 0;
+  for (const el of out.querySelectorAll("pre code.language-mermaid")) {
+    if (!mermaid) break;
+    const box = document.createElement("div"); box.className = "mmd";
+    el.parentElement.replaceWith(box);
+    try { box.innerHTML = (await mermaid.render("m" + (n++), el.textContent)).svg; }
+    catch (e) { box.innerHTML = `<div class="err">Mermaid error: ${esc(String(e.message || e))}</div><pre><code>${esc(el.textContent)}</code></pre>`; }
+  }
+  const t = out.querySelector("p strong"); if (t) document.title = "mermaidiff · " + t.textContent.slice(0, 60);
+  const mode = !mermaidSrc ? "no mermaid · " : mermaidSrc.startsWith("https://cdn") ? "cdn · " : "offline · ";
+  document.getElementById("when").textContent = mode + "updated " + new Date().toLocaleTimeString();
+  const m = location.hash.match(/y=(\d+)/); if (m) scrollTo(0, +m[1]);
+}
+
+// Live reload without a server: re-load <name>.version.js and reload the page if it changed.
+const stamp = location.pathname.split("/").pop().replace(/\.html$/, ".version.js");
+window.__mermaidiffVersion = v => {
+  document.getElementById("dot").style.background = "#1a7f37";
+  if (v && v !== VERSION) { location.hash = "y=" + Math.round(scrollY); location.reload(); }
+};
+function poll(){
+  const s = document.createElement("script");
+  s.src = stamp + "?t=" + Date.now();
+  s.onload = () => { s.remove(); setTimeout(poll, 1500); };
+  s.onerror = () => { s.remove(); document.getElementById("dot").style.background = "#9c9a92"; setTimeout(poll, 3000); };
+  document.head.appendChild(s);
+}
+
+document.getElementById("copy").onclick = async () => {
+  try { await navigator.clipboard.writeText(RAW); } catch {
+    const ta = Object.assign(document.createElement("textarea"), {value: RAW}); document.body.append(ta); ta.select(); document.execCommand("copy"); ta.remove();
+  }
+  const b = document.getElementById("copy"); b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy for MR", 1200);
+};
+await render();
+poll();
+</script>
+</body>
+</html>
