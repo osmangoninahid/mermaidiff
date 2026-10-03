@@ -24,7 +24,7 @@ Gather the facts, write the brief in the exact format in `format.md` (same folde
 
 If the diff is empty (nothing staged, no changes), reply with one line only: `Nothing to brief: <why>. Try /mermaidiff <sha> or stage changes.` Don't write or overwrite a brief.
 
-For a PR or MR, read code at the PR/MR head, not your local checkout: `git fetch origin <head-ref>` and read files with `git show FETCH_HEAD:<path>`. The PR/MR title and body are claims, like a commit message.
+For a PR or MR, read code at its head, not your local checkout. Fetch it by number, which also works for forks: GitHub `git fetch origin pull/<n>/head`, GitLab `git fetch origin merge-requests/<iid>/head`. Then read files with `git show FETCH_HEAD:<path>`. The PR/MR title and body are claims, like a commit message.
 
 If a login is missing (`gh`, `glab`, Jira), say which one in one line and fall back to the local `git diff`.
 
