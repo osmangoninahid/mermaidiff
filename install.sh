@@ -39,9 +39,17 @@ fi
 for t in "${TARGETS[@]}"; do
   mkdir -p "$(dirname "$t")"
   rm -rf "$t"
-  if [ "$MODE" = link ]; then ln -s "$SRC" "$t"; else cp -R "$SRC" "$t"; fi
+  if [ "$MODE" = link ]; then
+    ln -s "$SRC" "$t"
+  else
+    cp -R "$SRC" "$t"
+    # The repo's SKILL.md pre-approves its two scripts under ${CLAUDE_PLUGIN_ROOT} (plugin installs).
+    # A copied skill has no plugin root, so point the same two rules at ${CLAUDE_SKILL_DIR}.
+    sed -i.bak 's#${CLAUDE_PLUGIN_ROOT}/skill/scripts/#${CLAUDE_SKILL_DIR}/scripts/#g' "$t/SKILL.md" && rm -f "$t/SKILL.md.bak"
+  fi
   echo "installed: $t ($MODE)"
 done
+[ "$MODE" = link ] && echo "note: linked installs ask once to run collect.py and view.py. Choose \"don't ask again\"."
 echo
 for c in git rg python3 codegraph graphify gh glab; do
   if command -v "$c" >/dev/null; then echo "  ok      $c"; else echo "  missing $c"; fi

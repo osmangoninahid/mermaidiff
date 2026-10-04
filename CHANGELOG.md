@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `install.sh` copies get the same no-prompt rules as the plugin (rules point at `${CLAUDE_SKILL_DIR}`).
+
 ## 0.1.4
 
 - Pre-approve only the two bundled scripts (`collect.py`, `view.py`) by name, not every script in the folder.
