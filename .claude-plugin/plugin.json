@@ -23,5 +23,6 @@
   "displayName": "mermaidiff",
   "icon": "./docs/logo.png",
   "documentationUrl": "https://github.com/osmangoninahid/mermaidiff#readme",
-  "supportUrl": "https://github.com/osmangoninahid/mermaidiff/issues"
+  "supportUrl": "https://github.com/osmangoninahid/mermaidiff/issues",
+  "privacyPolicyUrl": "https://github.com/osmangoninahid/mermaidiff/blob/main/PRIVACY.md"
 }
