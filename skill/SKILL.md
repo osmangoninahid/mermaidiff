@@ -26,7 +26,14 @@ If the diff is empty (nothing staged, no changes), reply with one line only: `No
 
 For a PR or MR, read code at its head, not your local checkout. Fetch it by number, which also works for forks: GitHub `git fetch origin pull/<n>/head`, GitLab `git fetch origin merge-requests/<iid>/head`. Then read files with `git show FETCH_HEAD:<path>`. The PR/MR title and body are claims, like a commit message.
 
-If a login is missing (`gh`, `glab`, Jira), say which one in one line and fall back to the local `git diff`.
+If `gh` or `glab` is missing or not logged in, still brief the PR or MR with git alone. Fetch the head as above, then:
+1. Base: `git merge-base origin/HEAD FETCH_HEAD`. If `origin/HEAD` is not set, run `git remote set-head origin -a` once, or try `origin/main`, then `origin/master`.
+2. Diff: `git diff <base> FETCH_HEAD`.
+3. Say in one line: `No gh login: PR title and description skipped.` (or `glab`, `MR`).
+
+Never fall back to the local diff for a PR or MR. If the fetch fails (private repo, wrong number, or the PR is from another repo than `origin`), say why in one line and stop.
+
+If a Jira login is missing, say so in one line and brief the ticket text the user gave as a plan.
 
 If the change is only tests, docs, comments, logs or formatting: brief is `**No flow change.** <what changed>`. Skip step 2.
 

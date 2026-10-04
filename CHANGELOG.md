@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- PR and MR links work without `gh` or `glab`: the head is fetched with git and diffed against the merge-base. Only the PR title and description are skipped.
+
 ## 0.1.1
 
 - install as a Claude Code plugin: `/plugin marketplace add osmangoninahid/mermaidiff`
