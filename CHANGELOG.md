@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3
+
+- Faster: `scripts/collect.py` gathers the diff, callers and readers in one call (GitHub PR brief 62 s → 27 s on Opus).
+- Fewer permission prompts: the collector and `view.py` are pre-approved by the skill.
+- Same brief for the same diff is reused (cache key in the first line).
+- Eval re-run: 10/10 found, 0 false positives (`eval/SCORE-2026-10-04-speed.md`).
+
 ## 0.1.2
 
 - PR and MR links work without `gh` or `glab`: the head is fetched with git and diffed against the merge-base. Only the PR title and description are skipped.

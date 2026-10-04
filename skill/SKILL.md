@@ -1,13 +1,33 @@
 ---
 name: mermaidiff
 description: Brief any change as a git-style Mermaid flow diff (new / changed / removed) with payload diff, impact and open questions. Use for /mermaidiff, a Jira ticket, GitLab MR or GitHub PR link, commit sha, staged or unstaged changes, branch range, plan, refactor idea, or bug walkthrough, or when the user says "brief me".
+allowed-tools: Bash(python3 "${CLAUDE_SKILL_DIR}/scripts/*)
 ---
 
 # mermaidiff
 
-Gather the facts, write the brief in the exact format in `format.md` (same folder), then open it in the browser. Read `format.md` before writing output.
+Gather the facts, write the brief in the exact format in `format.md` (same folder), then open it in the browser.
 
-## 1. Parse the argument
+## 0. Collect the facts first
+
+Your first tool call, before reading anything else: run the bundled collector with the user's argument as one quoted string (empty string if none):
+
+```bash
+python3 "${CLAUDE_SKILL_DIR}/scripts/collect.py" '<argument>'
+```
+
+It prints the mode, the diff, the claim (commit message or PR text), and the callers and readers from `git grep`, taken at the right commit, in about a second. It ends with the full text of `format.md`, so you don't need to read that file.
+
+Use its output and don't run those git commands again:
+- `**stop:**` or `**empty:**` → reply with that reason in one line and stop.
+- `**cache hit:**` → do what it says and stop.
+- Otherwise go to step 2, and only fetch what is still missing.
+
+If the script can't run (no `python3`) or prints an error, collect the facts yourself with step 1 and read `format.md` in this skill's folder.
+
+**Be fast:** when you need several files or searches, request them all in one turn (parallel tool calls), not one by one.
+
+## 1. Parse the argument (only if the collector failed)
 
 | Argument | Mode | Get the change with |
 |---|---|---|
@@ -58,8 +78,8 @@ Keep 1–2 hops only. You need the path the change travels, not the whole system
 
 ## 3. Write and show the brief
 
-1. Write the brief to `.mermaidiff/<mode>.md` in the repo root (create the folder; it is gitignored by convention).
-2. Render it: `python3 <this skill folder>/scripts/view.py .mermaidiff/<mode>.md --open`. It writes `.mermaidiff/<mode>.html` and opens it in the default browser. No server. Run it outside any sandbox so it can open the browser.
+1. Write the brief to `.mermaidiff/<mode>.md` in the repo root with the Write tool (the folder is gitignored by convention). If the facts gave a cache key, make the first line `<!-- mermaidiff-key: <key> -->`.
+2. Render it: `python3 "${CLAUDE_SKILL_DIR}/scripts/view.py" .mermaidiff/<mode>.md --open` (a plain command, no `&&` or heredoc, so it matches the pre-approved rule). It writes `.mermaidiff/<mode>.html` and opens it in the default browser. No server. Run it outside any sandbox so it can open the browser.
 3. In the chat reply, print only: the summary line, 🔴 lines, ❓ lines, and the `file://` link `view.py` printed. Never print the `.md` path as a link.
 
 ## 4. Adjust and execute
