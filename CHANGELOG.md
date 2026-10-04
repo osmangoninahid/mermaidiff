@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4
+
+- Pre-approve only the two bundled scripts (`collect.py`, `view.py`) by name, not every script in the folder.
+
 ## 0.1.3
 
 - Faster: `scripts/collect.py` gathers the diff, callers and readers in one call (GitHub PR brief 62 s → 27 s on Opus).

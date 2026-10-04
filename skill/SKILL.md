@@ -1,7 +1,7 @@
 ---
 name: mermaidiff
 description: Brief any change as a git-style Mermaid flow diff (new / changed / removed) with payload diff, impact and open questions. Use for /mermaidiff, a Jira ticket, GitLab MR or GitHub PR link, commit sha, staged or unstaged changes, branch range, plan, refactor idea, or bug walkthrough, or when the user says "brief me".
-allowed-tools: Bash(python3 "${CLAUDE_SKILL_DIR}/scripts/*)
+allowed-tools: Bash(python3 "${CLAUDE_PLUGIN_ROOT}/skill/scripts/collect.py":*) Bash(python3 "${CLAUDE_PLUGIN_ROOT}/skill/scripts/view.py":*)
 ---
 
 # mermaidiff
