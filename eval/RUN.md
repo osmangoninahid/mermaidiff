@@ -16,6 +16,7 @@ Setup:
 mkdir -p $MD/../mermaidiff-eval-repos && cd $MD/../mermaidiff-eval-repos
 git clone --filter=blob:none https://github.com/fastapi/full-stack-fastapi-template.git fastapi
 git clone --filter=blob:none https://github.com/gin-gonic/gin.git gin
+git clone --filter=blob:none https://github.com/caddyserver/caddy.git caddy
 git clone --filter=blob:none https://github.com/excalidraw/excalidraw.git excalidraw
 (skip a clone if the folder already exists)
 
@@ -30,6 +31,7 @@ F3 · fastapi · 458fddd
 G1 · gin · 4a3eb31
 G2 · gin · d8f2d58
 G3 · gin · 074b669
+C1 · caddy · 197c564f2032becba14aeec0152fe5eeb639d6c1
 E1 · excalidraw · 02fc9f35
 E2 · excalidraw · 14e1c614
 E3 · excalidraw · 5a406e51
@@ -41,5 +43,5 @@ For each case:
 3. append one line to $MD/eval/results/log.md:
    <id> · <sha> · tool calls used · seconds taken · any problem you hit
 
-At the end, print only: "eval done, N of 10 briefs written".
+At the end, print only: "eval done, N of 11 briefs written".
 ```
