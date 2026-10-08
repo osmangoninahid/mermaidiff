@@ -11,6 +11,7 @@ Expected answers live in `expected.md`. The run must not read that file.
 | G1 | gin-gonic/gin | 4a3eb31 | logic |
 | G2 | gin-gonic/gin | d8f2d58 | config + logic |
 | G3 | gin-gonic/gin | 074b669 | no flow |
+| C1 | caddyserver/caddy | 197c564f2032becba14aeec0152fe5eeb639d6c1 | config default |
 | E1 | excalidraw/excalidraw | 02fc9f35 | logic |
 | E2 | excalidraw/excalidraw | 14e1c614 | large API change |
 | E3 | excalidraw/excalidraw | 5a406e51 | no flow (text only) |

@@ -27,6 +27,12 @@ must not: claims that `RunUnix`, `RunFd` or other run methods changed
 ## G3 · 074b669
 must: one line `No flow change.` (tests only)
 
+## C1 · 197c564f2032becba14aeec0152fe5eeb639d6c1 · ReadHeaderTimeout
+source: https://github.com/caddyserver/caddy/commit/197c564f2032becba14aeec0152fe5eeb639d6c1
+must: ✏️ `App.Provision` replaces a zero `Server.ReadHeaderTimeout` with the new `defaultReadHeaderTimeout` of 1 minute · nonzero configured values are left unchanged · config default diff for the existing `read_header_timeout` field (zero/unset → 1 minute)
+ok if present: explicit negative values are nonzero and are not replaced by this change · the existing default idle timeout remains 5 minutes
+must not: a new config field or rename · claims that `ReadTimeout`, `WriteTimeout` or `IdleTimeout` defaults changed · claims that every negative timeout is replaced · any ⚠️ may-break about clients outside the repo
+
 ## E1 · 02fc9f35 · setViewport
 must: ✏️ `setViewport` with a resolved target now calls `requestUnfollow` (UNFOLLOW intent via `onUserFollow` when `userToFollow` is set) · `setViewport(null)` and an unresolved target don't
 must not: claims that following itself changed
