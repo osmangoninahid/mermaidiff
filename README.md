@@ -38,9 +38,9 @@ The brief opens in your browser. Ask for changes in plain words ("drop the RunTL
 
 - **One line** saying what the code changes, taken from the diff, not the commit message
 - **A sequence diagram** of only the changed steps, colored like a diff
-- **Proof** for each step: `file:line` and an evidence tier, 🔵 seen in the code · 🟡 inferred · 🟢 seen running
+- **Proof**: up to 5 `file:line` bullets, one short fact each
 - **The payload diff** when a request, response, model or config changes
-- **Breaks**, only when the code proves them, and up to 2 open questions
+- **⚠️ may break**, only when the code proves a reachable path, and at most 1 open question
 - **⚠️ when the commit message or PR text claims something the diff doesn't do**
 
 ## The one rule: no false positives
@@ -49,7 +49,7 @@ A wrong warning is worse than a missing one. mermaidiff only shows what the diff
 
 ## Tested
 
-10 real commits from FastAPI, gin and excalidraw, every claim checked against the code. Details in [eval/](eval/).
+10 real commits from FastAPI, gin and excalidraw, every claim checked against the code: **10/10 found, 0 false positives**. Briefs in 0.1.5 are 40% shorter than 0.1.4. Details in [eval/](eval/).
 
 ![eval scorecard](docs/eval-scorecard.png)
 
