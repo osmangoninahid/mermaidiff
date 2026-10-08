@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.5
 
 - `install.sh` copies get the same no-prompt rules as the plugin (rules point at `${CLAUDE_SKILL_DIR}`).
 - Shorter briefs: proof max 5 bullets (no tiers), max 1 question, `Not checked` line only, facts only under the diagram.
@@ -28,6 +28,7 @@
 ## 0.1.0
 
 First public version.
+
 - `/mermaidiff` skill for commits, staged and unstaged changes, ranges, GitHub PRs and GitLab MRs
 - browser viewer with live reload and Copy for MR, no server
 - stat line recounted from the diagram
