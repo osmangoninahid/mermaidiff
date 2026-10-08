@@ -32,7 +32,7 @@ def open_in_browser(target):
         return False
 
 
-SYMBOLS = [("➕", "+{} new"), ("✏️", "~{} changed"), ("➖", "−{} removed"), ("🔴", "🔴 {} break")]
+SYMBOLS = [("➕", "+{} new"), ("✏️", "~{} changed"), ("➖", "−{} removed"), ("⚠️", "⚠️ {} may break")]
 TIERS = [("🟢", "verified"), ("🔵", "backed by code"), ("🟡", "inferred")]
 
 
@@ -62,7 +62,7 @@ def fix_stat_line(brief):
     stat = compute_stat(text)
     if not stat:
         return text
-    pattern = re.compile(r"`[^`]*\b(new|changed|removed|break)\b[^`]*`")
+    pattern = re.compile(r"`[^`]*\b(new|changed|removed|break|may break)\b[^`]*`")
     lines = text.split("\n")
     hits = [i for i, l in enumerate(lines) if pattern.fullmatch(l.strip())]
     if hits:

@@ -5,12 +5,12 @@ Score per case: found (all must-haves) · false (any must-not or unproven warnin
 ## F1 · 3c1f7c4 · created_at
 must: ➕ `created_at` column on user and item tables (migration, nullable) · ➕ `created_at` in `UserPublic` and `ItemPublic` (optional) · ✏️ list users and list items now order by `created_at desc` (items: both superuser and owner query) · payload diff for the 2 public models
 ok if present: regenerated frontend client types (same repo)
-must not: any 🔴 · claims about what a UI shows · warnings about API clients
-note: NULL ordering for old rows is a fair ❓ only, never 🔴
+must not: any ⚠️ may-break · claims about what a UI shows · warnings about API clients
+note: NULL ordering for old rows is a fair ❓ only, never ⚠️ may-break
 
 ## F2 · 9fe3a4d · 403
 must: ✏️ read, update and delete item return 403 instead of 400 when the user is not the owner and not superuser · all 3 routes named
-must not: any 🔴 about clients expecting 400 (outside repo)
+must not: any ⚠️ may-break about clients expecting 400 (outside repo)
 
 ## F3 · 458fddd
 must: one line `No flow change.` (tests only)

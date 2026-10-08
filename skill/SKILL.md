@@ -80,7 +80,7 @@ Keep 1–2 hops only. You need the path the change travels, not the whole system
 
 1. Write the brief to `.mermaidiff/<mode>.md` in the repo root with the Write tool (the folder is gitignored by convention). If the facts gave a cache key, make the first line `<!-- mermaidiff-key: <key> -->`.
 2. Render it: `python3 "${CLAUDE_SKILL_DIR}/scripts/view.py" .mermaidiff/<mode>.md --open` (a plain command, no `&&` or heredoc, so it matches the pre-approved rule). It writes `.mermaidiff/<mode>.html` and opens it in the default browser. No server. Run it outside any sandbox so it can open the browser.
-3. In the chat reply, print only: the summary line, 🔴 lines, ❓ lines, and the `file://` link `view.py` printed. Never print the `.md` path as a link.
+3. In the chat reply, print only: the summary line, ⚠️ may-break lines, ❓ line, and the `file://` link `view.py` printed. Never print the `.md` path as a link.
 
 ## 4. Adjust and execute
 

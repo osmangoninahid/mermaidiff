@@ -3,6 +3,8 @@
 ## Unreleased
 
 - `install.sh` copies get the same no-prompt rules as the plugin (rules point at `${CLAUDE_SKILL_DIR}`).
+- Shorter briefs: proof max 5 bullets (no tiers), max 1 question, `Not checked` line only, facts only under the diagram.
+- 🔴 break is now ⚠️ may break (amber), still only for proven reachable paths.
 
 ## 0.1.4
 

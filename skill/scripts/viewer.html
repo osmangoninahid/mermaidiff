@@ -26,7 +26,7 @@ pre code{background:none;padding:0;display:block}
 .mmd{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:16px 0;overflow:auto;text-align:center}
 .stat{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px;font-size:13px}
 .stat span{padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
-.stat .warn{border-color:var(--delfg);color:var(--delfg)}
+.stat .warn{border-color:#d08700;color:#b26b00}
 .err{color:var(--delfg);white-space:pre-wrap;text-align:left;font-size:13px}
 ul{padding-left:22px}
 li{margin:4px 0}
@@ -75,15 +75,15 @@ async function render(){
   const arrows = src.split("\n").filter(l => /(->>|-->>|->|-->|-x|--x)/.test(l) && l.includes(":")).map(l => l.split(":").slice(1).join(":"));
   const c = k => arrows.filter(l => l.trim().startsWith(k)).length;
   const qList = [...out.querySelectorAll("li")].filter(li => li.textContent.trim().startsWith("❓")).length;
-  const counts = {"+ new": c("➕"), "~ changed": c("✏️"), "− removed": c("➖"), "🔴 break": c("🔴"), "❓": Math.max(c("❓"), qList)};
+  const counts = {"+ new": c("➕"), "~ changed": c("✏️"), "− removed": c("➖"), "⚠️ may break": c("⚠️"), "❓": Math.max(c("❓"), qList)};
   const tiers = {"🟢": arrows.filter(l => l.includes("🟢")).length, "🔵": arrows.filter(l => l.includes("🔵")).length, "🟡": arrows.filter(l => l.includes("🟡")).length};
-  const changed = counts["+ new"] + counts["~ changed"] + counts["− removed"] + counts["🔴 break"];
+  const changed = counts["+ new"] + counts["~ changed"] + counts["− removed"] + counts["⚠️ may break"];
   if (src) {
     const st = document.createElement("div"); st.className = "stat";
     const pill = (t, w) => `<span class="${w ? "warn" : ""}">${t}</span>`;
-    let h = Object.entries(counts).filter(([, v]) => v).map(([k, v]) => pill(k.startsWith("❓") ? `❓ ${v}` : `${k.split(" ")[0]}${v} ${k.split(" ")[1]}`)).join("");
+    let h = Object.entries(counts).filter(([, v]) => v).map(([k, v]) => pill(k.startsWith("❓") ? `❓ ${v}` : k.startsWith("⚠️") ? `⚠️ ${v} may break` : `${k.split(" ")[0]}${v} ${k.split(" ")[1]}`, k.startsWith("⚠️"))).join("");
     h += Object.entries(tiers).filter(([, v]) => v).map(([k, v]) => pill(`${k} ${v}/${changed} ${{"🟢":"verified","🔵":"code","🟡":"inferred"}[k]}`)).join("");
-    const untiered = arrows.filter(l => /^\s*(➕|✏️|➖|🔴)/.test(l) && !/[🟢🔵🟡]/u.test(l)).length;
+    const untiered = arrows.filter(l => /^\s*(➕|✏️|➖|⚠️)/.test(l) && !/[🟢🔵🟡]/u.test(l)).length;
     if (untiered) h += pill(`${untiered} changed step(s) without a tier`, true);
     // the stat line is a paragraph that holds only one inline code span
     const statP = [...out.querySelectorAll("p")].find(p => p.children.length === 1 && p.firstElementChild.tagName === "CODE" && p.textContent.trim() === p.firstElementChild.textContent.trim() && /new|changed|removed|break|❓/.test(p.textContent));
